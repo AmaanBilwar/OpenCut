@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/resizable";
 import { AssetsPanel } from "@/components/editor/panels/assets";
 import { PropertiesPanel } from "@/components/editor/panels/properties";
+import { AIPanel } from "@/components/editor/panels/ai";
 import { Timeline } from "@/components/editor/panels/timeline";
 import { PreviewPanel } from "@/components/editor/panels/preview";
 import { EditorHeader } from "@/components/editor/editor-header";
@@ -93,6 +94,7 @@ function EditorLayout() {
 						setPanel("tools", sizes[0] ?? panels.tools);
 						setPanel("preview", sizes[1] ?? panels.preview);
 						setPanel("properties", sizes[2] ?? panels.properties);
+						setPanel("ai", sizes[3] ?? panels.ai);
 					}}
 				>
 					<ResizablePanel
@@ -123,6 +125,17 @@ function EditorLayout() {
 						className="min-w-0"
 					>
 						<PropertiesPanel />
+					</ResizablePanel>
+
+					<ResizableHandle withHandle />
+
+					<ResizablePanel
+						defaultSize={panels.ai}
+						minSize={15}
+						maxSize={40}
+						className="min-w-0"
+					>
+						<AIPanel />
 					</ResizablePanel>
 				</ResizablePanelGroup>
 			</ResizablePanel>
