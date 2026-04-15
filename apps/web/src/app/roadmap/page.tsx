@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { BasePage } from "@/app/base-page";
 import { GitHubContributeSection } from "@/components/gitHub-contribute-section";
 import { Badge } from "@/components/ui/badge";
-import { ReactMarkdownWrapper } from "@/components/ui/react-markdown-wrapper";
+import { Markdown } from "@/components/ui/markdown";
 import { cn } from "@/utils/ui";
 
 const LAST_UPDATED = "February 25, 2026";
@@ -118,7 +118,7 @@ function RoadmapItem({ item, index }: { item: RoadmapItem; index: number }) {
 				<StatusBadge status={item.status} className="ml-1" />
 			</div>
 			<div className="text-foreground/70 leading-relaxed">
-				<ReactMarkdownWrapper>{item.description}</ReactMarkdownWrapper>
+				<Markdown>{item.description}</Markdown>
 			</div>
 		</div>
 	);

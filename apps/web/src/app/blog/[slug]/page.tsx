@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { BasePage } from "@/app/base-page";
-import Prose from "@/components/ui/prose";
+import { cn } from "@/utils/ui";
 import { Separator } from "@/components/ui/separator";
 import { getPosts, getSinglePost, processHtmlContent } from "@/lib/blog/query";
 import type { Author, Post } from "@/lib/blog/types";
@@ -129,7 +129,12 @@ function PostTitle({ title }: { title: string }) {
 function PostContent({ html }: { html: string }) {
 	return (
 		<section className="">
-			<Prose html={html} />
+			<article
+				className={cn(
+					"prose prose-h2:font-semibold prose-h1:text-xl prose-a:text-blue-600 prose-p:first:mt-0 dark:prose-invert mx-auto max-w-none px-2",
+				)}
+				dangerouslySetInnerHTML={{ __html: html }}
+			/>
 		</section>
 	);
 }

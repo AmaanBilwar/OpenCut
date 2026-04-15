@@ -2,7 +2,7 @@
 
 import { ArrowRightIcon } from "lucide-react";
 import { useState } from "react";
-import ReactMarkdown from "react-markdown";
+import { Markdown } from "@/components/ui/markdown";
 import { SOCIAL_LINKS } from "@/lib/site/social";
 import { useLocalStorage } from "@/hooks/storage/use-local-storage";
 import { Button } from "../ui/button";
@@ -98,7 +98,7 @@ function Title({ title }: { title: string }) {
 function Description({ description }: { description: string }) {
 	return (
 		<div className="text-muted-foreground">
-			<ReactMarkdown
+			<Markdown
 				components={{
 					p: ({ children }) => <p className="mb-0">{children}</p>,
 					a: ({ href, children }) => (
@@ -114,7 +114,7 @@ function Description({ description }: { description: string }) {
 				}}
 			>
 				{description}
-			</ReactMarkdown>
+			</Markdown>
 		</div>
 	);
 }
