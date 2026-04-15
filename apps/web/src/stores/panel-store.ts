@@ -6,6 +6,7 @@ export interface PanelSizes {
 	tools: number;
 	preview: number;
 	properties: number;
+	ai: number;
 	mainContent: number;
 	timeline: number;
 }
