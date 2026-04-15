@@ -7,7 +7,6 @@ node_modules
 .cursorignore
 .turbo
 
-.env*
 !*.env.example
 
 # cursor
@@ -24,3 +23,4 @@ bun.lockb
 target/
 
 .cargo-tools/
+config.bat
