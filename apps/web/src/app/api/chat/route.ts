@@ -17,14 +17,17 @@ You MUST use these tools to accomplish tasks. Never guess or ask for information
 
 3. **updateElement** - Modify existing elements (requires trackId + elementId from getState)
 
-4. **deleteElements** - Remove elements
+4. **resetElement** - Reset transform/trim to default values (much easier than manually setting all properties)
 
-5. **playback** - Control playback
+5. **deleteElements** - Remove elements
+
+6. **playback** - Control playback
 
 ## Rules
 - ALWAYS call getState to find track/element IDs before updating anything
 - ALWAYS call getState to get video duration before setting element duration
 - NEVER ask the user for info you can get from getState
+- Use resetElement to reset transform or trim - don't manually set values
 - Confirm each change before making it`;
 
 export async function POST(req: Request) {
@@ -73,9 +76,14 @@ export async function POST(req: Request) {
               trimStart: z.number().optional(),
               trimEnd: z.number().optional(),
               opacity: z.number().optional(),
-              scale: z.number().optional(),
+              // Transform properties (nested under transform object)
+              scaleX: z.number().optional(),
+              scaleY: z.number().optional(),
               positionX: z.number().optional(),
               positionY: z.number().optional(),
+              rotation: z.number().optional(),
+              // Legacy flat properties (for backwards compatibility)
+              scale: z.number().optional(),
               // For text elements
               content: z.string().optional(),
               fontSize: z.number().optional(),
@@ -97,6 +105,19 @@ export async function POST(req: Request) {
               }),
             )
             .describe("Array of element references to delete"),
+        }),
+      }),
+
+      // Reset element properties
+      resetElement: tool({
+        description: "Reset properties of an element to default values",
+        inputSchema: z.object({
+          trackId: z.string().describe("Track ID containing the element"),
+          elementId: z.string().describe("ID of the element to reset"),
+          what: z
+            .enum(["transform", "trim", "all"])
+            .default("all")
+            .describe("What to reset: transform, trim, or all"),
         }),
       }),
 
