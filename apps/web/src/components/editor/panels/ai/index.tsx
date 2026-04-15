@@ -8,6 +8,7 @@ import { lastAssistantMessageIsCompleteWithToolCalls } from "ai";
 import { EditorCore } from "@/core";
 import { generateUUID } from "@/utils/id";
 import type { CreateTextElement } from "@/lib/timeline";
+import type { Transform } from "@/lib/rendering";
 
 type AddElementInput = {
   type: "text" | "video" | "image" | "audio" | "sticker" | "graphic";
@@ -26,9 +27,14 @@ type UpdateElementInput = {
     trimStart?: number;
     trimEnd?: number;
     opacity?: number;
-    scale?: number;
+    // Transform properties
+    scaleX?: number;
+    scaleY?: number;
     positionX?: number;
     positionY?: number;
+    rotation?: number;
+    scale?: number; // sets both scaleX and scaleY
+    // Text element properties
     content?: string;
     fontSize?: number;
     color?: string;
@@ -37,6 +43,12 @@ type UpdateElementInput = {
 
 type DeleteElementsInput = {
   elements: { trackId: string; elementId: string }[];
+};
+
+type ResetElementInput = {
+  trackId: string;
+  elementId: string;
+  what: "transform" | "trim" | "all";
 };
 
 type PlaybackInput = {
@@ -179,14 +191,50 @@ export function AIPanel() {
         const input = toolCall.input as UpdateElementInput;
         const { trackId, elementId, properties } = input;
 
+        // Build the patch - handle transform properties specially
+        const patch: Record<string, unknown> = { ...properties };
+
+        // If any transform-related properties are provided, build the transform object
+        if (
+          properties.scaleX !== undefined ||
+          properties.scaleY !== undefined ||
+          properties.positionX !== undefined ||
+          properties.positionY !== undefined ||
+          properties.rotation !== undefined ||
+          properties.scale !== undefined
+        ) {
+          // Get current element to preserve existing transform values
+          const track = editor.timeline.getTrackById({ trackId });
+          const currentElement = track?.elements.find((e) => e.id === elementId);
+          const currentTransform = (currentElement as { transform?: Transform })?.transform;
+
+          patch.transform = {
+            scaleX: properties.scale ?? properties.scaleX ?? currentTransform?.scaleX ?? 1,
+            scaleY: properties.scale ?? properties.scaleY ?? currentTransform?.scaleY ?? 1,
+            position: {
+              x: properties.positionX ?? currentTransform?.position?.x ?? 0,
+              y: properties.positionY ?? currentTransform?.position?.y ?? 0,
+            },
+            rotate: properties.rotation ?? currentTransform?.rotate ?? 0,
+          };
+
+          // Remove flat properties since we've moved them to transform
+          delete patch.scaleX;
+          delete patch.scaleY;
+          delete patch.positionX;
+          delete patch.positionY;
+          delete patch.rotation;
+          delete patch.scale;
+        }
+
         editor.timeline.updateElements({
-          updates: [{ trackId, elementId, patch: properties }],
+          updates: [{ trackId, elementId, patch }],
         });
 
         addToolOutput({
           tool: "updateElement",
           toolCallId: toolCall.toolCallId,
-          output: { success: true },
+          output: { success: true, updated: Object.keys(properties) },
         });
       }
 
@@ -200,6 +248,52 @@ export function AIPanel() {
           tool: "deleteElements",
           toolCallId: toolCall.toolCallId,
           output: { success: true, deletedCount: elements.length },
+        });
+      }
+
+      if (toolCall.toolName === "resetElement") {
+        const input = toolCall.input as ResetElementInput;
+        const { trackId, elementId, what } = input;
+
+        // Get current element to know its duration
+        const track = editor.timeline.getTrackById({ trackId });
+        const currentElement = track?.elements.find((e) => e.id === elementId);
+
+        if (!currentElement) {
+          addToolOutput({
+            tool: "resetElement",
+            toolCallId: toolCall.toolCallId,
+            state: "output-error",
+            errorText: `Element not found`,
+          });
+          return;
+        }
+
+        const duration = (currentElement as { duration: number }).duration;
+        const patch: Record<string, unknown> = {};
+
+        if (what === "transform" || what === "all") {
+          patch.transform = {
+            scaleX: 1,
+            scaleY: 1,
+            position: { x: 0, y: 0 },
+            rotate: 0,
+          };
+        }
+
+        if (what === "trim" || what === "all") {
+          patch.trimStart = 0;
+          patch.trimEnd = duration;
+        }
+
+        editor.timeline.updateElements({
+          updates: [{ trackId, elementId, patch }],
+        });
+
+        addToolOutput({
+          tool: "resetElement",
+          toolCallId: toolCall.toolCallId,
+          output: { success: true, reset: what },
         });
       }
 
