@@ -74,68 +74,82 @@ function EditorLayout() {
 
 	return (
 		<ResizablePanelGroup
-			direction="vertical"
-			className="size-full gap-[0.18rem]"
+			direction="horizontal"
+			className="size-full gap-[0.19rem] px-3"
 			onLayout={(sizes) => {
 				setPanel("mainContent", sizes[0] ?? panels.mainContent);
-				setPanel("timeline", sizes[1] ?? panels.timeline);
+				setPanel("ai", sizes[1] ?? panels.ai);
 			}}
 		>
 			<ResizablePanel
 				defaultSize={panels.mainContent}
 				minSize={30}
-				maxSize={85}
-				className="min-h-0"
+				className="min-w-0"
 			>
 				<ResizablePanelGroup
-					direction="horizontal"
-					className="size-full gap-[0.19rem] px-3"
+					direction="vertical"
+					className="size-full gap-[0.18rem]"
 					onLayout={(sizes) => {
-						setPanel("tools", sizes[0] ?? panels.tools);
-						setPanel("preview", sizes[1] ?? panels.preview);
-						setPanel("properties", sizes[2] ?? panels.properties);
-						setPanel("ai", sizes[3] ?? panels.ai);
+						setPanel("mainContent", sizes[0] ?? panels.mainContent);
+						setPanel("timeline", sizes[1] ?? panels.timeline);
 					}}
 				>
 					<ResizablePanel
-						defaultSize={panels.tools}
-						minSize={15}
-						maxSize={40}
-						className="min-w-0"
-					>
-						<AssetsPanel />
-					</ResizablePanel>
-
-					<ResizableHandle withHandle />
-
-					<ResizablePanel
-						defaultSize={panels.preview}
+						defaultSize={panels.mainContent}
 						minSize={30}
-						className="min-h-0 min-w-0 flex-1"
+						maxSize={85}
+						className="min-h-0"
 					>
-						<PreviewPanel />
+						<ResizablePanelGroup
+							direction="horizontal"
+							className="size-full gap-[0.19rem]"
+							onLayout={(sizes) => {
+								setPanel("tools", sizes[0] ?? panels.tools);
+								setPanel("preview", sizes[1] ?? panels.preview);
+								setPanel("properties", sizes[2] ?? panels.properties);
+							}}
+						>
+							<ResizablePanel
+								defaultSize={panels.tools}
+								minSize={15}
+								maxSize={40}
+								className="min-w-0"
+							>
+								<AssetsPanel />
+							</ResizablePanel>
+
+							<ResizableHandle withHandle />
+
+							<ResizablePanel
+								defaultSize={panels.preview}
+								minSize={30}
+								className="min-h-0 min-w-0 flex-1"
+							>
+								<PreviewPanel />
+							</ResizablePanel>
+
+							<ResizableHandle withHandle />
+
+							<ResizablePanel
+								defaultSize={panels.properties}
+								minSize={15}
+								maxSize={40}
+								className="min-w-0"
+							>
+								<PropertiesPanel />
+							</ResizablePanel>
+						</ResizablePanelGroup>
 					</ResizablePanel>
 
 					<ResizableHandle withHandle />
 
 					<ResizablePanel
-						defaultSize={panels.properties}
+						defaultSize={panels.timeline}
 						minSize={15}
-						maxSize={40}
-						className="min-w-0"
+						maxSize={70}
+						className="min-h-0 px-3 pb-3"
 					>
-						<PropertiesPanel />
-					</ResizablePanel>
-
-					<ResizableHandle withHandle />
-
-					<ResizablePanel
-						defaultSize={panels.ai}
-						minSize={15}
-						maxSize={40}
-						className="min-w-0"
-					>
-						<AIPanel />
+						<Timeline />
 					</ResizablePanel>
 				</ResizablePanelGroup>
 			</ResizablePanel>
@@ -143,12 +157,12 @@ function EditorLayout() {
 			<ResizableHandle withHandle />
 
 			<ResizablePanel
-				defaultSize={panels.timeline}
+				defaultSize={panels.ai}
 				minSize={15}
-				maxSize={70}
-				className="min-h-0 px-3 pb-3"
+				maxSize={40}
+				className="min-w-0"
 			>
-				<Timeline />
+				<AIPanel />
 			</ResizablePanel>
 		</ResizablePanelGroup>
 	);
