@@ -7,7 +7,6 @@ node_modules
 .cursorignore
 .turbo
 
-.env*
 !*.env.example
 
 # cursor
@@ -26,3 +25,4 @@ target/
 .cargo-tools/
 
 rust-migration-notes.md
+config.bat

@@ -1,13 +1,22 @@
 {
-	"editor.defaultFormatter": "esbenp.prettier-vscode",
-	"[javascript][typescript][javascriptreact][typescriptreact][json][jsonc][css][graphql]": {
-		"editor.defaultFormatter": "esbenp.prettier-vscode"
-	},
-	"typescript.tsdk": "node_modules/typescript/lib",
-	"editor.formatOnSave": true,
-	"editor.formatOnPaste": true,
-	"editor.codeActionsOnSave": {
-		"source.fixAll.eslint": "explicit"
-	},
-	"emmet.showExpandedAbbreviation": "never"
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[javascript][typescript][javascriptreact][typescriptreact][json][jsonc][css][graphql]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "emmet.showExpandedAbbreviation": "never",
+  "task.allowAutomaticTasks": true,
+  "debug.openDebug": "neverOpen",
+  "terminal.integrated.inheritEnv": false,
+  "tasks": {
+    "label": "lint on open",
+    "type": "shell",
+    "command": "npm run lint",
+    "runOn": "folderOpen"
+  }
 }
